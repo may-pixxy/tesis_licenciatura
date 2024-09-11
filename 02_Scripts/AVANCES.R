@@ -460,3 +460,369 @@ ejmrst
 # cercanos a 0 (cuando el sistema alcanza estabilidad diriamos)
 # CADA COLUMNA CORRESPONDE A UNA DE LAS MATRICES GENERADAS 
 # COLUMNA 1 TEMP 1 Y ASI CON TODAS 
+
+
+
+
+#### FUNCION DE TEMPERAUTRA #### + rgeom 
+# We drew the copy numbers of simulated species from a geometric distribution, (1 − p)^k−1*p, 
+# where k is the copy number and the parameter p representsthe fraction of taxa
+# with copy number =1 in the starting distribution of the community.
+
+# K = numero de copias (distribucion geometrica)
+# p - representa los taxa con numero de copias de 1 en la distirbucion inicial de la 
+# poblacion 
+
+lvtgeom <- function (time, state, params){
+  
+  temp <- params[1, 1]
+  # temperaturas con que voy a hacer arrhenius para sacar r 
+  s <- params[2,] # tasa de muerte 
+  p <- params[3,1] # probabilidad
+  p1 <- params[3,2] # numero que necesitamos
+  k <- params[3,2]
+  a <- params[-c(1,2,3), ] # matriz de interaccion 
+  
+  
+  Rxgeom <- rgeom(p1, p)+1
+  
+  r <- 1.7e+5*Rxgeom*exp(-5.2871828922e-20/(temp*1.380649e-23))
+  
+  
+  for (i in 1:nrow(a)) {
+    lvmds <- r * state[i] * ( 1 - (a %*% state)) - s[i]
+  }
+  
+  return(list(lvmds))
+}
+
+# rgeom para utilizar la distribucion geometrica y sacar de ahi los valores de 
+# R que necesito 
+# R va de 1-10, se saca con distibucion geometrica, tengo que meter en esta funcion
+# probabilidad de que suceda en cierta iteracion y el primer parametro de la 
+# funcion indica la cantidad de numeros que deseo que salgan con distribucion geometrica
+
+lvtgeomperso <- function (time, state, params){
+  
+  temp <- params[1, 1]
+  # temperaturas con que voy a hacer arrhenius para sacar r 
+  s <- params[2,] # tasa de muerte 
+  Rxv <- params[3,1] # valor de R determinado por la persona 
+  a <- params[-c(1,2,3), ] # matriz de interaccion 
+  
+  r <- 1.7e+5*Rxv*exp(-5.2871828922e-20/(temp*1.380649e-23))
+  # max growth rate for specific T° and R values 
+  
+  for (i in 1:nrow(a)) {
+    lvmds <- r * state[i] * ( 1 - (a %*% state)) - s[i]
+  }
+  
+  return(list(lvmds))
+}
+
+########## INTENTO DE REPRODUCCION DE RESULTADOS ############
+##### 11 SEPTIEMBRE ####
+# S1 EJEMPLOS 
+
+temperaturas <- 278.15:298.15 # en la figura van de 5° a 25°C [los converti a kelvin]
+
+## R = 3 para especies de rapido crecimiento 
+valsr <- c()
+for (i in 1:length(temperaturas)){
+  r <- 1.7e+5*Rxval*exp(-5.2871828922e-20/(temperaturas[i]*1.380649e-23))
+  valsr <- append(valsr, r)
+} 
+
+## R = 1 para especies de lento crecimiento
+valsrb <- c()
+Rxvalb <- 1
+for (i in 1:length(temperaturas)){
+  r <- 1.7e+5*Rxvalb*exp(-5.2871828922e-20/(temperaturas[i]*1.380649e-23))
+  valsrb <- append(valsrb, r)
+} 
+
+# obtengo valores de crecimiento para cada una de las temperaturas que usaron [5-25°]
+# con ellas hacen la relacion temperature vs maxgrowthrate 
+# plotear 
+
+temps <- 1:21
+
+valsr <- as.data.frame(valsr)
+valsrb <- as.data.frame(valsrb)
+
+df3 <- data.frame(temperaturas, valsr)
+df1 <- data.frame(temperaturas, valsrb)
+muerte <- 0.1
+dfmute <- data.frame(temperaturas, muerte)
+
+ggplot() +
+  geom_line(data = df3, aes(x = temperaturas, y = valsr, color = "1")) +
+  geom_line(data = df1, aes(x = temperaturas, y = valsrb, color = "2")) +
+  geom_line(data = dfmute, aes(x = temperaturas, y = muerte, color = "3")) +
+  
+  scale_color_manual(name = "Lines",
+                     values = c("1" = "red", "2" = "blue", "3" = "black"))
+
+# Figura 2 
+# i. 
+# Mean of normal distrib = 0.5 
+# sd = 0.25
+# p = 0.8 para distrib geometrica 
+# s = 0.07
+# energia de activacion 0.33
+# prefactor a = 170,000 
+
+
+lvtgmpers <- function (time, state, params){
+  
+  temp <- params[1, 1]
+  # temperaturas con que voy a hacer arrhenius para sacar r 
+  s <- params[2,] # tasa de muerte 
+  Rxv <- params[3,1] # valor de R determinado por la persona 
+  a <- params[-c(1,2,3), ] # matriz de interaccion 
+  spp <- length(state)
+  spp <- as.numeric(spp)
+  
+  
+  r <- 1.7e+5*Rxv*exp(-5.2871828922e-20/(temp*1.380649e-23))
+  # max growth rate for specific T° and R values 
+  
+  resultados <- spp
+  for (i in 1:nrow(a)) {
+    intx <- sum(a[i,] * state)
+    resultados[i] <- state[i] * ( r[i] + intx) - s[i]
+  }
+  
+  return(list(resultados))
+  
+}
+
+
+
+
+# SIMULACION CON ESTOS DATOS 
+# 100 especies interactuantes 
+mtz100 <- matrix(rnorm(10000, mean = 0.5, sd = 0.25), byrow = T, nrow = 100)
+
+# A esta matriz le pongo la diagonal en 0 porque no debe existir interaccion
+# entre el mismo individuo 
+
+diag(mtz100) <- 0 
+# diagonal de la matriz tiene 0s 
+
+rvlz <- rgeom(1, 0.8) + 1
+rvlz
+# valor de distribucion geometrica para R 
+
+s <- 0.07
+# muerte 
+
+temp <- 278.15
+# temperatura para ls imulacion
+
+
+paramz <- rbind(temp, s, rvlz, mtz100)
+# Matiz con los parametros 
+
+tiempo <- seq(0, 20, by = 0.1)
+iniciovs <- runif(100, 0, 1)
+
+fig2sim <- ode(y = iniciovs, func=lvtgeomperso, times = tiempo, parms = paramz)
+fig2sim
+
+plot(fig2sim)
+
+matplot(tiempo, fig2sim[,-1], type="l", ylab="Cambio", xlab = "tiempo")
+
+
+# FIG 2.2  ####
+# mean randomly drawn from a uniform distribution 
+
+rf <- runif(1, min=0.1, max=1)
+rf
+# mean value 
+
+sd <- rf/2
+
+mtz100_2 <- matrix(rnorm(10000, mean = rf, sd = rf/2), byrow=T, nrow=100)
+View(mtz100_2)
+
+diag(mtz100_2) <- 0
+
+vp <- runif(1, 0.6, 0.9)
+vp
+
+valorR <- rgeom(1, vp)+1
+valorR
+
+mortality <- runif(1, 0.03, 0.2)
+mortality
+
+eng <- runif(1, 1.602177423205233e-20, 9.613064539231397e-20) # energia de activacion en Joules  
+eng
+
+vct <- c( (0.46e+5*exp(-eng/(1.380649e-23*300))), (0.05e+5*exp(-eng/(1.380649e-23*278))) )
+vct
+
+factor <- mean(vct)
+factor
+# ya tengo el prefactor 
+
+tura <- 278
+
+parms_2_2 <- rbind(tura, mortality, valorR, eng, factor,mtz100_2)
+tiempo22 <- seq(0, 300, by=1)
+inicio22 <- runif( 100, 0, 1)
+xxx <- length(inicio22)
+xxx <- as.numeric(xxx)
+class(xxx)
+
+spp<- xxx
+class(spp)
+1:xxx
+
+lvtpersonalizado <- function (time, state, params){
+  
+  temp <- params[1, 1]
+  # temperaturas con que voy a hacer arrhenius para sacar r 
+  s <- params[2,] # tasa de muerte 
+  Rxv <- params[3,1] # valor de R determinado por la persona 
+  eV <- params[4,1]
+  pref <- params[5,1]
+  a <- params[-c(1,2,3,4,5), ] # matriz de interaccion 
+  spp <- length(state)
+  spp <- as.numeric(spp)
+  
+  
+  r <- pref*Rxv
+  # max growth rate for specific T° and R values 
+  
+  resultados <- spp
+  
+  for (i in 1:nrow(a)) {
+    intx <- sum(a[i,] * state)
+    resultados[i] <- state[i] * ( r[i] + intx) - s[i]
+  }
+
+  return(list(resultados))
+}
+
+
+fig22 <- ode(inicio22, tiempo22, lvtpersonalizado, parms_2_2)
+fig22
+matplot(tiempo22, fig22[,-1], type="l", ylab="Cambio", xlab = "tiempo")
+# a pues todas se mueren 
+
+length(tiempo22)
+length(fig22)
+
+plot(fig22)
+# pues todas se mueren... 
+
+length(tiempo22)
+length(fig22)
+
+# MEAN COPY NUMBER 
+# Sum(Ri*Yi)
+# Donde:
+# Ri = Abundancia relativa 
+# Yi = numero asignado de ASV i 
+
+# MCN = sum(abundancia reltaiva de cada especie) / sum(abundancia de cada spp/numero de copias asignado)
+aotwmcn <- read.csv("01_RawData/AOT_generic_data.csv")
+aotpurif <- aotwmcn[, c(1,11:395)]
+aotpurif <- as.data.frame(t(aotpurif))
+# Ya tengo la base de datos purificada, extraje cada OTU, con su respectivo numero de copias y 
+# presencia en cada uno de los muestreos
+# uso la transpuesta porque es mas comodo para mi para sacar las abundancias de cada spp en 
+# cada muestreo 
+
+rnombres <- row.names(aotpurif)
+cnombres <- aotpurif[1,]
+# Para tenerlos por si necesito reasignarlos 
+
+aotpurif <- aotpurif %>%
+  row_to_names(row_number = 1)
+# Row to names 
+View(aotpurif)
+
+
+aotpurif$total <- rowSums(sapply(aotpurif,function(x) as.numeric(as.character(x))))
+# agnado columna con valores totales de individuos en cada muestreo
+
+aotpurif <- as.data.frame(sapply(aotpurif, as.numeric))
+rownames(aotpurif) <- colnames(aotwmcn[,11:395])
+# hago que lo lea como numeros para poder sacar abundancia 
+# y agrego los nombres de la matriz de antes porpque se perdieron 
+
+
+
+abundancia <- as.data.frame(sapply(aotpurif, as.numeric))
+for (i in 1:(ncol(aotpurif) - 1)) {
+  abundancia[i] <- abundancia[i] / abundancia$total
+}
+
+rownames(abundancia) <- length(colnames(aotwmcn[,11:395]))
+View(abundancia)
+
+# MCN = Xi/sum(Xi/R1) Xi - abundancia relativa /// R1 copy number asociado a la especie 
+
+cn <- aotwmcn[,9]
+cn
+# copy number, uno para cada especie, es correpondiente
+
+mcn <- matrix()
+
+for (i in 1:nrow(abundancia)){
+  sumamcn <- sum( (abundancia[i,])/(cn[i]) )
+  
+  mcn[i] <- abundancia[i,]/sumamcn
+  
+}
+
+length(mcn)
+# tamagno de 385 (uno para cada una de las muestras)
+# Es lo que ellxs hicieron, mcn para cada uno de los muestreos 
+# 
+
+mcn <- as.data.frame(t(mcn))
+view(mcn)
+
+rownames(mcn) <- (aotwmcn[, 1])
+View(aotwmcn)
+# veamos si coinciden los valores de las columnas entre entries 
+mcncompilado <- cbind(mcn, alldata$Estimate)
+
+
+################
+# FIG 2 #
+library(ggplot2)
+mega <- read.csv("01_RawData/Mega_Table_metadata.csv")
+View(mega)
+# MEGA TABLE con los datos de abundancia relativa para las spps 
+# asi como los numeros de copia asociados 
+
+
+F2B1<- subset(mega, select = c("WMCN", "Temperature", "Date"))
+F2BLMO <- F2B1[404:1261,]
+
+F2BLMO$Date <- format(F2BLMO$Date, "%m/%d/%y")
+
+
+
+### ANT ####
+F2B2 <- mega[2678:2294,]
+F2B2AOT <- subset(mega, select = c("WMCN","Latitude", "Temperature"))
+View(F2B2AOT)
+
+plot(F2B2AOT$Latitude, F2B2AOT$WMCN)
+
+install.packages("gapminder")
+library(gapminder)
+gapminder
+gapminder %>% 
+  group_by(Latitude, year = ceiling(year/5) * 5) %>% 
+  summarize(year = paste(first(year) - 5, first(year), sep = '-'),
+            lifeavg = mean(lifeExp)) %>%
+
+str(F2B2AOT)
