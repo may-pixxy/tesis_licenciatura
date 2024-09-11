@@ -563,6 +563,9 @@ ggplot() +
   scale_color_manual(name = "Lines",
                      values = c("1" = "red", "2" = "blue", "3" = "black"))
 
+
+##############################################################################################################################################################
+##### DESDE AQUI ####
 # Figura 2 
 # i. 
 # Mean of normal distrib = 0.5 
@@ -580,20 +583,15 @@ lvtgmpers <- function (time, state, params){
   s <- params[2,] # tasa de muerte 
   Rxv <- params[3,1] # valor de R determinado por la persona 
   a <- params[-c(1,2,3), ] # matriz de interaccion 
-  spp <- length(state)
-  spp <- as.numeric(spp)
-  
   
   r <- 1.7e+5*Rxv*exp(-5.2871828922e-20/(temp*1.380649e-23))
   # max growth rate for specific T° and R values 
   
-  resultados <- spp
   for (i in 1:nrow(a)) {
-    intx <- sum(a[i,] * state)
-    resultados[i] <- state[i] * ( r[i] + intx) - s[i]
+    lvmds <- r * state[i] * ( 1 - (a %*% state)) - s[i]
   }
   
-  return(list(resultados))
+  return(list(lvmds))
   
 }
 
@@ -673,13 +671,6 @@ tura <- 278
 parms_2_2 <- rbind(tura, mortality, valorR, eng, factor,mtz100_2)
 tiempo22 <- seq(0, 300, by=1)
 inicio22 <- runif( 100, 0, 1)
-xxx <- length(inicio22)
-xxx <- as.numeric(xxx)
-class(xxx)
-
-spp<- xxx
-class(spp)
-1:xxx
 
 lvtpersonalizado <- function (time, state, params){
   
@@ -690,21 +681,16 @@ lvtpersonalizado <- function (time, state, params){
   eV <- params[4,1]
   pref <- params[5,1]
   a <- params[-c(1,2,3,4,5), ] # matriz de interaccion 
-  spp <- length(state)
-  spp <- as.numeric(spp)
   
-  
-  r <- pref*Rxv
+  r <- pref*Rxv*exp(-eV/(temp))
   # max growth rate for specific T° and R values 
   
-  resultados <- spp
   
   for (i in 1:nrow(a)) {
-    intx <- sum(a[i,] * state)
-    resultados[i] <- state[i] * ( r[i] + intx) - s[i]
+    lvmds <- r * state[i] * ( 1 - (a %*% state)) - s[i]
   }
-
-  return(list(resultados))
+  
+  return(list(lvmds))
 }
 
 
@@ -722,6 +708,8 @@ plot(fig22)
 length(tiempo22)
 length(fig22)
 
+#################################################################################################################################################################
+##### HASTA AQUI ####
 # MEAN COPY NUMBER 
 # Sum(Ri*Yi)
 # Donde:
