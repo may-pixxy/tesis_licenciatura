@@ -138,19 +138,3 @@ plot(lv_lvcm)
 # PROBLEMAS: 
 # NO ENCONTRE COMO INCLUIR TASA DE MUERTE CON LA FUNCION LVCOMPG 
 # 2. SE MUEREN OTRA VEZ (AUNQUE AHORA YA NO LLEGAN A NUMEROS NEGATIVOS)
-
-
-# generate a random interaction matrix
-ExampleA <- randomA(n_species = 4, diagonal = -1)
-
-# run the model with default values (only stochastic migration considered)
-tse <- simulateGLV(n_species = 4, A = ExampleA)
-
-# run the model with two external disturbances at time points 240 and 480
-# with durations equal to 1 (10 time steps when t_step by default is 0.1).
-ExampleGLV <- simulateGLV(
-  n_species = 4, A = ExampleA,
-  t_external_events = c(0, 240, 480), t_external_durations = c(0, 1, 1)
-)
-ExampleGLV
-metadata(ExampleGLV)
