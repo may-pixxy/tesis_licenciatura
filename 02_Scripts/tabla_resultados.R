@@ -70,21 +70,28 @@ simulaciones <- function (numero_species, iniciales, pvalor, temps, energia, mor
   # obtengo mis listas de parametros con los valores de R, MATRIZ Y MUERTE 
   
   
-  n <- length(prub)*length(a)
-  rst1 <- list()
-  rst_df <- list()
-  
   for (x in 1:length(prub)){
     for (f in 1:length(a)){
       incs <- as.numeric(unlist ( a[[f]] ) )
       
-      for (i in 1:n){
-        rst1[[i]] <- ode(incs, tiempo, lotka_volterra, prub[[x]])
-        rst_df[[i]] <- as.data.frame(rst1[[i]])
+      rst1<- ode(incs, tiempo, lotka_volterra, prub[[x]])
+      rst_df <- as.data.frame(rst1)
+      
+      matplot(rst_df$time, rst_df[, -1], type = "l", lty = 1, col = 1:numero_species,
+              xlab = "Time", ylab = "Population Size", main = paste("Lotka-Volterra Model for",
+                                                                    numero_species, "Species"))
+      # Obtener todas las graficas y poder guardarlas 
+      
+      for (i in 1:length(rst_df)){
+        write.csv(rst_df, file = paste0(directorio, temps[x],nombre, i))
       }
+      # Guardar cada una de las simulaciones en el directorio deseado con el nombre especificado
     }
   }
+     
+  
   
   return(rst_df)
-  
+  # Pero solo va a devolver el ultimo valor, no va a guardar el resto de las matrices producidas 
+  # en las simulaciones (como un objeto en R con el que pueda trabajar, todo o guarda en carpeta)
 }
