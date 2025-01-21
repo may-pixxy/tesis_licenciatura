@@ -70,11 +70,11 @@ simulaciones <- function (numero_species, iniciales, pvalor, temps, energia, mor
   # obtengo mis listas de parametros con los valores de R, MATRIZ Y MUERTE 
   
   
-  for (x in 1:length(prub)){
-    for (f in 1:length(a)){
-      incs <- as.numeric(unlist ( a[[f]] ) )
+  for (x in 1:length(parmtros)){
+    for (f in 1:length(matriz)){
+      incs <- as.numeric(unlist ( matriz[[f]] ) )
       
-      rst1<- ode(incs, tiempo, lotka_volterra, prub[[x]])
+      rst1<- ode(incs, tiempo, lotka_volterra, parmtros[[x]])
       rst_df <- as.data.frame(rst1)
       
       matplot(rst_df$time, rst_df[, -1], type = "l", lty = 1, col = 1:numero_species,
@@ -83,7 +83,7 @@ simulaciones <- function (numero_species, iniciales, pvalor, temps, energia, mor
       # Obtener todas las graficas y poder guardarlas 
       
       for (i in 1:length(rst_df)){
-        write.csv(rst_df, file = paste0(directorio, temps[x],nombre, i))
+        write.csv(rst_df, file = paste0(directorio, temps[x], nombre, i))
       }
       # Guardar cada una de las simulaciones en el directorio deseado con el nombre especificado
     }
