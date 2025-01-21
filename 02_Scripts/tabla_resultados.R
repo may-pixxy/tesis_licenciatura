@@ -27,10 +27,13 @@ condiciones_iniciales <- function (nsimulaciones, nspecies){
   return(initial_states)
   
 }
+# NOTA: simulaciones tiene que ser un integrer, para que pueda contabilizarlo 
+# como mas de uno 
 
 a <- condiciones_iniciales(nsimulaciones = 1:10, nspecies = 20)
+a
 
-
+class(a)
 # FUNCION QUE CREA LISTAS DE PARAMETROS SEGUN LA TEMPERATURA 
 parametros <- function(temperaturas, nspecies, p, energy, alpha, muerte){
   
@@ -58,40 +61,62 @@ parametros <- function(temperaturas, nspecies, p, energy, alpha, muerte){
 }
 
 prub <- parametros(temperaturas = 278:282, nspecies = 20, p = 0.8, energy = 0.33, alpha = mz20[,-1], muerte = 0.07)
+pms <- parametros(temperaturas = 278:279, nspecies = 7, p = 0.8, energy = 0.33, alpha = mz7[,-1], muerte = 0.07)
+pms
 
+
+
+View(mz7)
 
 # FUNCION PARA HACER LAS SIMULACIONES 
 simulaciones <- function (numero_species, iniciales, pvalor, temps, energia, morte, matriz, tiempo, sims, directorio, nombre){
   
-  
+
   # Generar parametros 
   parmtros <- parametros(temperaturas = temps, nspecies = numero_species, p = pvalor, energy = energia, alpha = matriz, 
                          muerte = morte)
   # obtengo mis listas de parametros con los valores de R, MATRIZ Y MUERTE 
   
-  
   for (x in 1:length(parmtros)){
-    for (f in 1:length(matriz)){
-      incs <- as.numeric(unlist ( matriz[[f]] ) )
-      
-      rst1<- ode(incs, tiempo, lotka_volterra, parmtros[[x]])
-      rst_df <- as.data.frame(rst1)
-      
-      matplot(rst_df$time, rst_df[, -1], type = "l", lty = 1, col = 1:numero_species,
-              xlab = "Time", ylab = "Population Size", main = paste("Lotka-Volterra Model for",
-                                                                    numero_species, "Species"))
-      # Obtener todas las graficas y poder guardarlas 
-      
-      for (i in 1:length(rst_df)){
-        write.csv(rst_df, file = paste0(directorio, temps[x], nombre, i))
-      }
-      # Guardar cada una de las simulaciones en el directorio deseado con el nombre especificado
-    }
-  }
+  for (f in 1:length(iniciales)){
+    incs <- as.numeric(unlist ( iniciales[[f]] ) )
+    
+    rst1<- ode(incs, tiempo, lotka_volterra, parmtros[[x]])
+    rst_df <- as.data.frame(rst1)
      
-  
-  
-  return(rst_df)
-  # Pero solo va a devolver el ultimo valor, no va a guardar el resto de las matrices producidas 
-  # en las simulaciones (como un objeto en R con el que pueda trabajar, todo o guarda en carpeta)
+    matplot(rst_df$time, rst_df[, -1], type = "l", lty = 1, col = 1:numero_species,
+            xlab = "Time", ylab = "Population Size", main = paste("Lotka-Volterra Model for",
+                                                                  numero_species, "Species", "(",
+                                                                  temperatura[x], ")"))
+    
+    write.csv(rst_df, file = paste0(directorio, temperatura[x], nombre, f)) 
+    
+    for (i in 1:(length(matriz)*length(parmtros))){
+      return(assign(paste('rst_df',i,sep=''), rst_df))
+    }
+    
+  }
+  }
 }
+
+
+ # intentandolo todo 
+
+# Parametros 
+number_species <- 20
+p<-0.8
+tempss<-278
+energiact<-0.33
+muert<- runif(number_species,min=0.03,max=0.2)
+matriz20 <- mz20[, -1]
+times <- seq(0, 1000, by = 0.1)
+directorio20 <- "03_Output/simulacion_p08_ev033_muerte007_RYP//1_matrices_para_simulaciones/"
+nombre20 <- "_p08_m007_e033_7spp"
+
+condiciones20sim <- condiciones_iniciales(nsimulaciones = 1:10, nspecies = 20)
+condiciones20sim
+sims20 <- simulaciones(numero_species= number_species, iniciales = condiciones20sim, pvalor = p, 
+                       temps = tempss, energia = energiact, morte = muert, matriz = matriz20, 
+                       tiempo= times, sims= 20, directorio = directorio20, nombre = nombre20)
+
+# ERROR in alpha %*% N requires numeric/complex matrix/vector arguments
