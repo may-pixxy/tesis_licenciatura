@@ -1,14 +1,36 @@
 # Generar tablas de abundancias 
 
-#### FUNCION PARA CAMBIAR LOS VALORES INFIMOS EN LA MATRIZ ####
-change_to_zero <- function (tabla){
-  tabla[tabla <= 1e-6] <- 0
-  tabla <- as.data.frame(tabla)
-  tabla <- sapply(tabla, as.numeric)
-  
-  resultados_tabla <- t(tabla)
-  return(resultados_tabla)
-}
+#### TABLA PARA CUALQUIER SIM ####
+tabla278_80spp_zero <- change_to_zero(tabla278_80spp)
+tabla279_80spp_zero <- change_to_zero(tabla279_80spp)
+tabla280_80spp_zero <- change_to_zero(tabla280_80spp)
+tabla281_80spp_zero <- change_to_zero(tabla281_80spp)
+tabla282_80spp_zero <- change_to_zero(tabla282_80spp)
+tabla283_80spp_zero <- change_to_zero(tabla283_80spp)
+tabla284_80spp_zero <- change_to_zero(tabla284_80spp)
+tabla285_80spp_zero <- change_to_zero(tabla285_80spp)
+tabla286_80spp_zero <- change_to_zero(tabla286_80spp)
+tabla287_80spp_zero <- change_to_zero(tabla287_80spp)
+tabla288_80spp_zero <- change_to_zero(tabla288_80spp)
+tabla289_80spp_zero <- change_to_zero(tabla289_80spp)
+tabla290_80spp_zero <- change_to_zero(tabla290_80spp)
+tabla291_80spp_zero <- change_to_zero(tabla291_80spp)
+tabla292_80spp_zero <- change_to_zero(tabla292_80spp)
+tabla293_80spp_zero <- change_to_zero(tabla293_80spp)
+tabla294_80spp_zero <- change_to_zero(tabla294_80spp)
+tabla295_80spp_zero <- change_to_zero(tabla295_80spp)
+tabla296_80spp_zero <- change_to_zero(tabla296_80spp)
+tabla297_80spp_zero <- change_to_zero(tabla297_80spp)
+tabla298_80spp_zero <- change_to_zero(tabla298_80spp)
+
+tablas80spp <- list(tabla278_80spp_zero, tabla279_80spp_zero, tabla280_80spp_zero, tabla281_80spp_zero,
+                   tabla282_80spp_zero, tabla283_80spp_zero, tabla284_80spp_zero, tabla285_80spp_zero,
+                   tabla286_80spp_zero, tabla287_80spp_zero, tabla288_80spp_zero, tabla289_80spp_zero, 
+                   tabla290_80spp_zero, tabla291_80spp_zero, tabla292_80spp_zero, tabla293_80spp_zero,
+                   tabla294_80spp_zero, tabla295_80spp_zero, tabla296_80spp_zero, tabla297_80spp_zero,
+                   tabla298_80spp_zero)
+
+write.csv(tablas80spp, "03_Output/simulacion_p08_ev033_muerte007_tablas/tablas_abundancias_80spp") 
 
 #### TABLA PARA 7 SPP ####
 
@@ -101,6 +123,17 @@ tabla296_50spp_zero <- change_to_zero(tabla296_50spp)
 tabla297_50spp_zero <- change_to_zero(tabla297_50spp)
 tabla298_50spp_zero <- change_to_zero(tabla298_50spp)
 
+
+tabla299_50spp_zero <- change_to_zero(tabla299_50spp)
+tabla300_50spp_zero <- change_to_zero(tabla300_50spp)
+tabla301_50spp_zero <- change_to_zero(tabla301_50spp)
+tabla302_50spp_zero <- change_to_zero(tabla302_50spp)
+tabla303_50spp_zero <- change_to_zero(tabla303_50spp)
+tabla304_50spp_zero <- change_to_zero(tabla304_50spp)
+tabla305_50spp_zero <- change_to_zero(tabla305_50spp)
+tabla306_50spp_zero <- change_to_zero(tabla306_50spp)
+tabla307_50spp_zero <- change_to_zero(tabla307_50spp)
+
 tablas50spp <- list(tabla278_50spp_zero, tabla279_50spp_zero, tabla280_50spp_zero, tabla281_50spp_zero,
                     tabla282_50spp_zero, tabla283_50spp_zero, tabla284_50spp_zero, tabla285_50spp_zero,
                     tabla286_50spp_zero, tabla287_50spp_zero, tabla288_50spp_zero, tabla289_50spp_zero, 
@@ -142,4 +175,52 @@ tablas100spp <- list(tabla278_100spp_zero, tabla279_100spp_zero, tabla280_100spp
                      tabla298_100spp_zero)
 
 
-write.csv(tablas100spp, "03_Output/simulacion_p08_ev033_muerte007_tablas/tablas_abundancias_100spp") 
+write.csv(tablas100spp, "03_Output/simulacion_p08_ev033_muerte007_tablas/tablas_abundancias_100spp")
+
+###################################
+## Simulaciones con salto de 0.01 ##
+tabla278.01_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.02_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.03_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.04_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.05_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.06_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.07_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.08_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.09_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.1_100spp_zero <- change_to_zero(tabla278.1_100spp)
+tabla278.11_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.12_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.13_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.14_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.15_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.16_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.17_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.18_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.19_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.20_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.21_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.22_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.23_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.24_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.25_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.26_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.27_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.28_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.29_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.3_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.31_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.32_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.33_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.34_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.35_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.36_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.01_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.01_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.01_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.01_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.01_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.01_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.01_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.01_100spp_zero <- change_to_zero(tabla278.01_100spp)
+tabla278.01_100spp_zero <- change_to_zero(tabla278.01_100spp)

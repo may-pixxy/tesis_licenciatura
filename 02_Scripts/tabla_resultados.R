@@ -61,46 +61,42 @@ parametros <- function(temperaturas, nspecies, p, energy, alpha, muerte){
 }
 
 prub <- parametros(temperaturas = 278:282, nspecies = 20, p = 0.8, energy = 0.33, alpha = mz20[,-1], muerte = 0.07)
-pms <- parametros(temperaturas = 278:279, nspecies = 7, p = 0.8, energy = 0.33, alpha = mz7[,-1], muerte = 0.07)
-pms
-
-
 
 View(mz7)
 
 # FUNCION PARA HACER LAS SIMULACIONES 
 simulaciones <- function (numero_species, iniciales, pvalor, temps, energia, morte, matriz, tiempo, sims, directorio, nombre){
   
-
+  
   # Generar parametros 
   parmtros <- parametros(temperaturas = temps, nspecies = numero_species, p = pvalor, energy = energia, alpha = matriz, 
                          muerte = morte)
   # obtengo mis listas de parametros con los valores de R, MATRIZ Y MUERTE 
   
   for (x in 1:length(parmtros)){
-  for (f in 1:length(iniciales)){
-    incs <- as.numeric(unlist ( iniciales[[f]] ) )
-    
-    rst1<- ode(incs, tiempo, lotka_volterra, parmtros[[x]])
-    rst_df <- as.data.frame(rst1)
-     
-    matplot(rst_df$time, rst_df[, -1], type = "l", lty = 1, col = 1:numero_species,
-            xlab = "Time", ylab = "Population Size", main = paste("Lotka-Volterra Model for",
-                                                                  numero_species, "Species", "(",
-                                                                  temperatura[x], ")"))
-    
-    write.csv(rst_df, file = paste0(directorio, temperatura[x], nombre, f)) 
-    
-    for (i in 1:(length(matriz)*length(parmtros))){
-      return(assign(paste('rst_df',i,sep=''), rst_df))
+    for (f in 1:length(iniciales)){
+      incs <- as.numeric(unlist ( iniciales[[f]] ) )
+      
+      rst1<- ode(incs, tiempo, lotka_volterra, parmtros[[x]])
+      rst_df <- as.data.frame(rst1)
+      
+      matplot(rst_df$time, rst_df[, -1], type = "l", lty = 1, col = 1:numero_species,
+              xlab = "Time", ylab = "Population Size", main = paste("Lotka-Volterra Model for",
+                                                                    numero_species, "Species", "(",
+                                                                    temperatura[x], ")"))
+      
+      write.csv(rst_df, file = paste0(directorio, temperatura[x], nombre, f)) 
+      
+      for (i in 1:(length(matriz)*length(parmtros))){
+        return(assign(paste('rst_df',i,sep=''), rst_df))
+      }
+      
     }
-    
-  }
   }
 }
 
 
- # intentandolo todo 
+# intentandolo todo 
 
 # Parametros 
 number_species <- 20
@@ -119,4 +115,3 @@ sims20 <- simulaciones(numero_species= number_species, iniciales = condiciones20
                        temps = tempss, energia = energiact, morte = muert, matriz = matriz20, 
                        tiempo= times, sims= 20, directorio = directorio20, nombre = nombre20)
 
-# ERROR in alpha %*% N requires numeric/complex matrix/vector arguments

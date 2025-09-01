@@ -1,6 +1,6 @@
 library(deSolve)
 source("02_Scripts/Functions.R")
-number_species<-100
+number_species<-50
 # Initial population sizes for the 6 species
 initial_state <- runif(number_species,min=1,max=100)
 initial_state <- runif(number_species)
